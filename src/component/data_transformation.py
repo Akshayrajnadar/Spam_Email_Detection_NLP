@@ -16,39 +16,52 @@ from src.utils import save_object
 
 @dataclass
 class DataTransformationConfig:
-    preprocess_obj_file_path = os.path.json('artifacts', "preprocessor.pkl")
+    preprocessor_obj_file_path=os.path.join('artifacts',"proprocessor.pkl")
 
 class DataTransformation:
     def __init__(self):
         self.data_transformation_config=DataTransformationConfig()
 
     def get_data_transformer_object(self):
-        '''
-        This function is responsible for data transformation.
-        '''
 
         try:
-            numerical_columns=[]
-            categorical_columns=[]
+            numerical_columns = ["spam"]
+            categorical_columns = ["text"]
 
-            num_pipeline=Pipeline(
-
+            # Define numerical pipeline
+            num_pipeline = Pipeline(
+                steps=[
+                    ("imputer", SimpleImputer(strategy="mean")),  # Handle missing values
+                    ("scaler", StandardScaler())                # Standardize numerical data
+                ]
             )
 
-            cat_pipeline=Pipeline(
-
+            # Define categorical pipeline
+            cat_pipeline = Pipeline(
+                steps=[
+                    ("imputer", SimpleImputer(strategy="most_frequent")),  # Handle missing values
+                    ("onehot", OneHotEncoder()),                          # Encode categorical data
+                    ("scaler", StandardScaler(with_mean=False))           # Standardize encoded data
+                ]
             )
 
             logging.info(f"Categorical columns: {categorical_columns}")
             logging.info(f"Numerical columns: {numerical_columns}")
 
-            preprocessor=ColumnTransformer(
-
+            # Combine pipelines into a single preprocessor
+            preprocessor = ColumnTransformer(
+                transformers=[
+                    ("num", num_pipeline, numerical_columns),
+                    ("cat", cat_pipeline, categorical_columns)
+                ]
             )
 
-            return preprocessor
+            return preprocessor  # Properly indented inside the function
+        
         except Exception as e:
-            raise CustomException(e,sys)
+            raise CustomException(e, sys)
+
+
         
     def initiate_data_transformation(self, train_path, test_path):
 
@@ -62,8 +75,8 @@ class DataTransformation:
 
             preprocessing_obj=self.get_data_transformer_object()
 
-            target_column_name=""
-            numerical_columns = []
+            target_column_name="spam"
+            numerical_columns = ["spam"]
 
             input_feature_train_df=train_df.drop(columns=[target_column_name],axis=1)
             target_feature_train_df=train_df[target_column_name]
