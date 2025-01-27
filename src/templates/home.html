@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Detection</title>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f9;">
+    <div style="width: 80%; margin: auto; overflow: hidden; padding: 20px;">
+        <h1 style="color: #333; text-align: center;">Spam Detection</h1>
+        <form method="POST" style="margin-top: 20px;">
+            <!-- Subject Input -->
+            <label for="subject" style="display: block; margin: 10px 0 5px;">Email Subject:</label>
+            <input type="text" id="subject" name="subject" required style="padding: 10px; width: 100%; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            
+            <!-- Submit Button -->
+            <button type="submit" style="padding: 10px; width: 100%; background-color: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Check Spam</button>
+        </form>
+
+        {% if results is not none %}
+            <div style="margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; background-color: #fff;">
+                <h2 style="color: green;">Detection Result:</h2>
+                <p>The subject is {{ 'Spam' if results == 1 else 'Not Spam' }}</p>
+            </div>
+        {% elif error %}
+            <div style="margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; background-color: #fff;">
+                <h2 style="color: red;">Error:</h2>
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
